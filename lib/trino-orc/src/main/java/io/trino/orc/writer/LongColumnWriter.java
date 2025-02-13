@@ -114,6 +114,9 @@ public class LongColumnWriter
                 dataStream.writeLong(value);
                 statisticsBuilder.addValue(value);
             }
+            else {
+                statisticsBuilder.setHasNull(true);
+            }
         }
     }
 

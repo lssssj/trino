@@ -20,6 +20,4 @@ public interface RangeStatistics<T>
     T getMax();
 
     long getRetainedSizeInBytes();
-
-    boolean hasNull();
 }

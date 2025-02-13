@@ -64,7 +64,6 @@ public class IntegerStatisticsBuilder
         nonNullValueCount += valueCount;
         minimum = Math.min(value.getMin(), minimum);
         maximum = Math.max(value.getMax(), maximum);
-        hasNull |= value.hasNull();
 
         if (value.getSum() == null) {
             // if input value does not have a sum tag this stat as overflowed
@@ -87,7 +86,7 @@ public class IntegerStatisticsBuilder
         if (nonNullValueCount == 0) {
             return Optional.empty();
         }
-        return Optional.of(new IntegerStatistics(minimum, maximum, overflow ? null : sum, hasNull));
+        return Optional.of(new IntegerStatistics(minimum, maximum, overflow ? null : sum));
     }
 
     @Override
@@ -106,11 +105,13 @@ public class IntegerStatisticsBuilder
                 null,
                 null,
                 null,
-                bloomFilterBuilder.buildBloomFilter());
+                bloomFilterBuilder.buildBloomFilter(),
+                hasNull);
     }
 
     @Override
-    public void setHasNull(boolean hasNull) {
+    public void setHasNull(boolean hasNull)
+    {
         this.hasNull = hasNull;
     }
 
@@ -119,6 +120,9 @@ public class IntegerStatisticsBuilder
         IntegerStatisticsBuilder integerStatisticsBuilder = new IntegerStatisticsBuilder(new NoOpBloomFilterBuilder());
         for (ColumnStatistics columnStatistics : stats) {
             IntegerStatistics partialStatistics = columnStatistics.getIntegerStatistics();
+            if (columnStatistics.hasNull()) {
+                integerStatisticsBuilder.setHasNull(true);
+            }
             if (columnStatistics.getNumberOfValues() > 0) {
                 if (partialStatistics == null) {
                     // there are non null values but no statistics, so we cannot say anything about the data

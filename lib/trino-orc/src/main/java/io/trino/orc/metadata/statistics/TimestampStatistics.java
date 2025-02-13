@@ -35,9 +35,7 @@ public class TimestampStatistics
     private final long minimum;
     private final long maximum;
 
-    private boolean hasNull;
-
-    public TimestampStatistics(Long minimum, Long maximum, boolean hasNull)
+    public TimestampStatistics(Long minimum, Long maximum)
     {
         checkArgument(minimum == null || maximum == null || minimum <= maximum, "minimum is not less than or equal to maximum: %s, %s", minimum, maximum);
 
@@ -46,7 +44,6 @@ public class TimestampStatistics
 
         this.hasMaximum = maximum != null;
         this.maximum = hasMaximum ? maximum : 0;
-        this.hasNull = hasNull;
     }
 
     @Override
@@ -68,11 +65,6 @@ public class TimestampStatistics
     }
 
     @Override
-    public boolean hasNull() {
-        return hasNull;
-    }
-
-    @Override
     public boolean equals(Object o)
     {
         if (this == o) {
@@ -83,14 +75,13 @@ public class TimestampStatistics
         }
         TimestampStatistics that = (TimestampStatistics) o;
         return Objects.equals(getMin(), that.getMin()) &&
-                Objects.equals(getMax(), that.getMax()) &&
-                Objects.equals(hasNull(), that.hasNull());
+                Objects.equals(getMax(), that.getMax());
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(getMin(), getMax(), hasNull());
+        return Objects.hash(getMin(), getMax());
     }
 
     @Override
@@ -99,7 +90,6 @@ public class TimestampStatistics
         return toStringHelper(this)
                 .add("min", getMin())
                 .add("max", getMax())
-                .add("hasNull", hasNull())
                 .toString();
     }
 

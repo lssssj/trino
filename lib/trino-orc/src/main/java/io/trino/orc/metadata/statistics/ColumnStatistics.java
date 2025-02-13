@@ -47,6 +47,7 @@ public class ColumnStatistics
     private final DecimalStatistics decimalStatistics;
     private final BinaryStatistics binaryStatistics;
     private final BloomFilter bloomFilter;
+    private final boolean hasNull;
 
     public ColumnStatistics(
             Long numberOfValues,
@@ -60,7 +61,8 @@ public class ColumnStatistics
             TimestampStatistics timestampStatistics,
             DecimalStatistics decimalStatistics,
             BinaryStatistics binaryStatistics,
-            BloomFilter bloomFilter)
+            BloomFilter bloomFilter,
+            boolean hasNull)
     {
         this.hasNumberOfValues = numberOfValues != null;
         this.numberOfValues = hasNumberOfValues ? numberOfValues : 0;
@@ -75,6 +77,7 @@ public class ColumnStatistics
         this.decimalStatistics = decimalStatistics;
         this.binaryStatistics = binaryStatistics;
         this.bloomFilter = bloomFilter;
+        this.hasNull = hasNull;
     }
 
     public boolean hasNumberOfValues()
@@ -167,7 +170,8 @@ public class ColumnStatistics
                 timestampStatistics,
                 decimalStatistics,
                 binaryStatistics,
-                bloomFilter);
+                bloomFilter,
+                hasNull);
     }
 
     public long getRetainedSizeInBytes()
@@ -203,6 +207,11 @@ public class ColumnStatistics
         return retainedSizeInBytes;
     }
 
+    public boolean hasNull()
+    {
+        return hasNull;
+    }
+
     @Override
     public boolean equals(Object o)
     {
@@ -215,6 +224,7 @@ public class ColumnStatistics
         ColumnStatistics that = (ColumnStatistics) o;
         return hasNumberOfValues == that.hasNumberOfValues &&
                 getNumberOfValues() == that.getNumberOfValues() &&
+                hasNull == that.hasNull &&
                 Objects.equals(booleanStatistics, that.booleanStatistics) &&
                 Objects.equals(integerStatistics, that.integerStatistics) &&
                 Objects.equals(doubleStatistics, that.doubleStatistics) &&
@@ -231,6 +241,7 @@ public class ColumnStatistics
     {
         return Objects.hash(
                 hasNumberOfValues,
+                hasNull,
                 getNumberOfValues(),
                 booleanStatistics,
                 integerStatistics,
@@ -249,6 +260,7 @@ public class ColumnStatistics
         return toStringHelper(this)
                 .omitNullValues()
                 .add("numberOfValues", getNumberOfValues())
+                .add("hasNull", hasNull)
                 .add("booleanStatistics", booleanStatistics)
                 .add("integerStatistics", integerStatistics)
                 .add("doubleStatistics", doubleStatistics)
@@ -305,6 +317,12 @@ public class ColumnStatistics
                 mergeTimestampStatistics(stats).orElse(null),
                 mergeDecimalStatistics(stats).orElse(null),
                 mergeBinaryStatistics(stats).orElse(null),
-                null);
+                null,
+                mergeHasNull(stats));
+    }
+
+    public static boolean mergeHasNull(List<ColumnStatistics> stats)
+    {
+        return stats.stream().anyMatch(ColumnStatistics::hasNull);
     }
 }

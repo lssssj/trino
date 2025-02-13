@@ -141,8 +141,8 @@ public class MapColumnWriter
     public Map<OrcColumnId, ColumnStatistics> finishRowGroup()
     {
         checkState(!closed);
-
-        ColumnStatistics statistics = new ColumnStatistics((long) nonNullValueCount, 0, null, null, null, null, null, null, null, null, null, null);
+        // TODO
+        ColumnStatistics statistics = new ColumnStatistics((long) nonNullValueCount, 0, null, null, null, null, null, null, null, null, null, null, true);
         rowGroupColumnStatistics.add(statistics);
         nonNullValueCount = 0;
 

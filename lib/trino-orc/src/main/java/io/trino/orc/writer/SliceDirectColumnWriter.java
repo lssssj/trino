@@ -119,6 +119,9 @@ public class SliceDirectColumnWriter
                 dataStream.writeSlice(value);
                 statisticsBuilder.addValue(value);
             }
+            else {
+                statisticsBuilder.setHasNull(true);
+            }
         }
     }
 

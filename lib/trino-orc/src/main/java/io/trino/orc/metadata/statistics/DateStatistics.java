@@ -35,9 +35,7 @@ public class DateStatistics
     private final int minimum;
     private final int maximum;
 
-    private final boolean hasNull;
-
-    public DateStatistics(Integer minimum, Integer maximum, boolean hasNull)
+    public DateStatistics(Integer minimum, Integer maximum)
     {
         checkArgument(minimum == null || maximum == null || minimum <= maximum, "minimum is not less than or equal to maximum: %s, %s", minimum, maximum);
 
@@ -46,8 +44,6 @@ public class DateStatistics
 
         this.hasMaximum = maximum != null;
         this.maximum = hasMaximum ? maximum : 0;
-
-        this.hasNull = hasNull;
     }
 
     @Override
@@ -60,11 +56,6 @@ public class DateStatistics
     public Integer getMax()
     {
         return hasMaximum ? maximum : null;
-    }
-
-    @Override
-    public boolean hasNull() {
-        return hasNull;
     }
 
     @Override
@@ -84,14 +75,13 @@ public class DateStatistics
         }
         DateStatistics that = (DateStatistics) o;
         return Objects.equals(getMin(), that.getMin()) &&
-                Objects.equals(getMax(), that.getMax()) &&
-                Objects.equals(hasNull(), that.hasNull());
+                Objects.equals(getMax(), that.getMax());
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(getMin(), getMax(), hasNull());
+        return Objects.hash(getMin(), getMax());
     }
 
     @Override
@@ -100,7 +90,6 @@ public class DateStatistics
         return toStringHelper(this)
                 .add("min", getMin())
                 .add("max", getMax())
-                .add("hasNull", hasNull())
                 .toString();
     }
 

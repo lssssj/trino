@@ -563,7 +563,7 @@ public class OrcWriteValidation
                 return Optional.empty();
             }
             ImmutableList.Builder<ColumnStatistics> statisticsBuilders = ImmutableList.builder();
-            statisticsBuilders.add(new ColumnStatistics(rowCount, 0, null, null, null, null, null, null, null, null, null, null));
+            statisticsBuilders.add(new ColumnStatistics(rowCount, 0, null, null, null, null, null, null, null, null, null, null, true));
             columnStatisticsValidations.forEach(validation -> validation.build(statisticsBuilders));
             return Optional.of(new ColumnMetadata<>(statisticsBuilders.build()));
         }
@@ -738,6 +738,7 @@ public class OrcWriteValidation
             implements StatisticsBuilder
     {
         private long rowCount;
+        private boolean hasNull;
 
         @Override
         public void addBlock(Type type, Block block)
@@ -746,13 +747,22 @@ public class OrcWriteValidation
                 if (!block.isNull(position)) {
                     rowCount++;
                 }
+                else {
+                    setHasNull(true);
+                }
             }
         }
 
         @Override
         public ColumnStatistics buildColumnStatistics()
         {
-            return new ColumnStatistics(rowCount, 0, null, null, null, null, null, null, null, null, null, null);
+            return new ColumnStatistics(rowCount, 0, null, null, null, null, null, null, null, null, null, null, hasNull);
+        }
+
+        @Override
+        public void setHasNull(boolean hasNull)
+        {
+            this.hasNull = hasNull;
         }
     }
 

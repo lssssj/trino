@@ -332,6 +332,9 @@ public class TimestampColumnWriter
                 writeValues(seconds, nanosFraction);
                 statisticsBuilder.addValue(millis);
             }
+            else {
+                statisticsBuilder.setHasNull(true);
+            }
         }
     }
 
@@ -353,6 +356,9 @@ public class TimestampColumnWriter
                 writeValues(seconds, nanosFraction);
                 statisticsBuilder.addValue(millis);
             }
+            else {
+                statisticsBuilder.setHasNull(true);
+            }
         }
     }
 
@@ -361,6 +367,9 @@ public class TimestampColumnWriter
         for (int i = 0; i < block.getPositionCount(); i++) {
             if (!block.isNull(i)) {
                 writeMillis(unpackMillisUtc(type.getLong(block, i)));
+            }
+            else {
+                statisticsBuilder.setHasNull(true);
             }
         }
     }
@@ -380,6 +389,9 @@ public class TimestampColumnWriter
 
                 writeValues(seconds, nanosFraction);
                 statisticsBuilder.addValue(millis);
+            }
+            else {
+                statisticsBuilder.setHasNull(true);
             }
         }
     }

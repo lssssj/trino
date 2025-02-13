@@ -127,7 +127,8 @@ public class StructColumnWriter
     public Map<OrcColumnId, ColumnStatistics> finishRowGroup()
     {
         checkState(!closed);
-        ColumnStatistics statistics = new ColumnStatistics((long) nonNullValueCount, 0, null, null, null, null, null, null, null, null, null, null);
+        boolean hasNull = ColumnStatistics.mergeHasNull(rowGroupColumnStatistics);
+        ColumnStatistics statistics = new ColumnStatistics((long) nonNullValueCount, 0, null, null, null, null, null, null, null, null, null, null, hasNull);
         rowGroupColumnStatistics.add(statistics);
         nonNullValueCount = 0;
 

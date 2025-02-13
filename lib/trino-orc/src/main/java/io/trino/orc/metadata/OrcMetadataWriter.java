@@ -231,6 +231,7 @@ public class OrcMetadataWriter
     private static OrcProto.ColumnStatistics toColumnStatistics(ColumnStatistics columnStatistics)
     {
         OrcProto.ColumnStatistics.Builder builder = OrcProto.ColumnStatistics.newBuilder();
+        builder.setHasNull(columnStatistics.hasNull());
 
         if (columnStatistics.hasNumberOfValues()) {
             builder.setNumberOfValues(columnStatistics.getNumberOfValues());
@@ -240,7 +241,6 @@ public class OrcMetadataWriter
             builder.setBucketStatistics(OrcProto.BucketStatistics.newBuilder()
                     .addCount(columnStatistics.getBooleanStatistics().getTrueValueCount())
                     .build());
-            builder.setHasNull(columnStatistics.getBooleanStatistics().hasNull());
         }
 
         if (columnStatistics.getIntegerStatistics() != null) {
@@ -251,7 +251,6 @@ public class OrcMetadataWriter
                 integerStatistics.setSum(columnStatistics.getIntegerStatistics().getSum());
             }
             builder.setIntStatistics(integerStatistics.build());
-            builder.setHasNull(columnStatistics.getIntegerStatistics().hasNull());
         }
 
         if (columnStatistics.getDoubleStatistics() != null) {
@@ -259,7 +258,6 @@ public class OrcMetadataWriter
                     .setMinimum(columnStatistics.getDoubleStatistics().getMin())
                     .setMaximum(columnStatistics.getDoubleStatistics().getMax())
                     .build());
-            builder.setHasNull(columnStatistics.getDoubleStatistics().hasNull());
         }
 
         if (columnStatistics.getStringStatistics() != null) {
@@ -272,7 +270,6 @@ public class OrcMetadataWriter
             }
             statisticsBuilder.setSum(columnStatistics.getStringStatistics().getSum());
             builder.setStringStatistics(statisticsBuilder.build());
-            builder.setHasNull(columnStatistics.getStringStatistics().hasNull());
         }
 
         if (columnStatistics.getDateStatistics() != null) {
@@ -280,7 +277,6 @@ public class OrcMetadataWriter
                     .setMinimum(columnStatistics.getDateStatistics().getMin())
                     .setMaximum(columnStatistics.getDateStatistics().getMax())
                     .build());
-            builder.setHasNull(columnStatistics.getDateStatistics().hasNull());
         }
 
         if (columnStatistics.getTimestampStatistics() != null) {
@@ -288,7 +284,6 @@ public class OrcMetadataWriter
                     .setMinimumUtc(columnStatistics.getTimestampStatistics().getMin())
                     .setMaximumUtc(columnStatistics.getTimestampStatistics().getMax())
                     .build());
-            builder.setHasNull(columnStatistics.getTimestampStatistics().hasNull());
         }
 
         if (columnStatistics.getDecimalStatistics() != null) {
@@ -296,14 +291,12 @@ public class OrcMetadataWriter
                     .setMinimum(columnStatistics.getDecimalStatistics().getMin().toString())
                     .setMaximum(columnStatistics.getDecimalStatistics().getMax().toString())
                     .build());
-            builder.setHasNull(columnStatistics.getDecimalStatistics().hasNull());
         }
 
         if (columnStatistics.getBinaryStatistics() != null) {
             builder.setBinaryStatistics(OrcProto.BinaryStatistics.newBuilder()
                     .setSum(columnStatistics.getBinaryStatistics().getSum())
                     .build());
-            builder.setHasNull(columnStatistics.getBinaryStatistics().hasNull());
         }
 
         return builder.build();

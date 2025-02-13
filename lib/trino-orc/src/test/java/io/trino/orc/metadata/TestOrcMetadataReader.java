@@ -182,8 +182,7 @@ public class TestOrcMetadataReader
                         .setMaximum("cat")
                         .setSum(44)
                         .build(),
-                false,
-                true)).isNull();
+                false)).isNull();
 
         // having only sum should work for current version
         for (boolean isRowGroup : ImmutableList.of(true, false)) {
@@ -192,8 +191,7 @@ public class TestOrcMetadataReader
                     OrcProto.StringStatistics.newBuilder()
                             .setSum(45)
                             .build(),
-                    isRowGroup,
-                    true)).isEqualTo(new StringStatistics(null, null, 45, true));
+                    isRowGroup)).isEqualTo(new StringStatistics(null, null, 45));
         }
         // and the ORIGINAL version row group stats (but not rolled up stats)
         assertThat(OrcMetadataReader.toStringStatistics(
@@ -201,8 +199,7 @@ public class TestOrcMetadataReader
                 OrcProto.StringStatistics.newBuilder()
                         .setSum(45)
                         .build(),
-                true,
-                true)).isEqualTo(new StringStatistics(null, null, 45, true));
+                true)).isEqualTo(new StringStatistics(null, null, 45));
 
         // having only a min or max should work
         assertThat(OrcMetadataReader.toStringStatistics(
@@ -210,15 +207,13 @@ public class TestOrcMetadataReader
                 OrcProto.StringStatistics.newBuilder()
                         .setMinimum("ant")
                         .build(),
-                true,
-                true)).isEqualTo(new StringStatistics(utf8Slice("ant"), null, 0, true));
+                true)).isEqualTo(new StringStatistics(utf8Slice("ant"), null, 0));
         assertThat(OrcMetadataReader.toStringStatistics(
                 ORC_HIVE_8732,
                 OrcProto.StringStatistics.newBuilder()
                         .setMaximum("cat")
                         .build(),
-                true,
-                true)).isEqualTo(new StringStatistics(null, utf8Slice("cat"), 0, true));
+                true)).isEqualTo(new StringStatistics(null, utf8Slice("cat"), 0));
 
         // normal full stat
         assertThat(OrcMetadataReader.toStringStatistics(
@@ -228,8 +223,7 @@ public class TestOrcMetadataReader
                         .setMaximum("cat")
                         .setSum(79)
                         .build(),
-                true,
-                true)).isEqualTo(new StringStatistics(utf8Slice("ant"), utf8Slice("cat"), 79, true));
+                true)).isEqualTo(new StringStatistics(utf8Slice("ant"), utf8Slice("cat"), 79));
 
         for (Slice prefix : ALL_UTF8_SEQUENCES) {
             for (int testCodePoint : TEST_CODE_POINTS) {
@@ -252,7 +246,6 @@ public class TestOrcMetadataReader
                         .setMaximumBytes(ByteString.copyFrom(testValue.getBytes()))
                         .setSum(79)
                         .build(),
-                true,
                 true)).isEqualTo(createExpectedStringStatistics(version, testValue, testValue, 79, true));
         assertThat(OrcMetadataReader.toStringStatistics(
                 version,
@@ -260,7 +253,6 @@ public class TestOrcMetadataReader
                         .setMinimumBytes(ByteString.copyFrom(testValue.getBytes()))
                         .setSum(79)
                         .build(),
-                true,
                 true)).isEqualTo(createExpectedStringStatistics(version, testValue, null, 79, true));
         assertThat(OrcMetadataReader.toStringStatistics(
                 version,
@@ -268,7 +260,6 @@ public class TestOrcMetadataReader
                         .setMaximumBytes(ByteString.copyFrom(testValue.getBytes()))
                         .setSum(79)
                         .build(),
-                true,
                 true)).isEqualTo(createExpectedStringStatistics(version, null, testValue, 79, true));
     }
 
@@ -277,8 +268,7 @@ public class TestOrcMetadataReader
         return new StringStatistics(
                 minStringTruncateToValidRange(min, version),
                 maxStringTruncateToValidRange(max, version),
-                sum,
-                hasNull);
+                sum);
     }
 
     @Test

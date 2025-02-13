@@ -85,7 +85,7 @@ public class TimestampStatisticsBuilder
         if (nonNullValueCount == 0) {
             return Optional.empty();
         }
-        return Optional.of(new TimestampStatistics(minimum, maximum, hasNull));
+        return Optional.of(new TimestampStatistics(minimum, maximum));
     }
 
     @Override
@@ -104,11 +104,13 @@ public class TimestampStatisticsBuilder
                 timestampStatistics.orElse(null),
                 null,
                 null,
-                bloomFilterBuilder.buildBloomFilter());
+                bloomFilterBuilder.buildBloomFilter(),
+                hasNull);
     }
 
     @Override
-    public void setHasNull(boolean hasNull) {
+    public void setHasNull(boolean hasNull)
+    {
         this.hasNull = hasNull;
     }
 
@@ -117,6 +119,9 @@ public class TimestampStatisticsBuilder
         TimestampStatisticsBuilder timestampStatisticsBuilder = new TimestampStatisticsBuilder(new NoOpBloomFilterBuilder());
         for (ColumnStatistics columnStatistics : stats) {
             TimestampStatistics partialStatistics = columnStatistics.getTimestampStatistics();
+            if (columnStatistics.hasNull()) {
+                timestampStatisticsBuilder.setHasNull(true);
+            }
             if (columnStatistics.getNumberOfValues() > 0) {
                 if (partialStatistics == null) {
                     // there are non null values but no statistics, so we can not say anything about the data

@@ -27,22 +27,15 @@ public class BinaryStatistics
     private static final int INSTANCE_SIZE = instanceSize(BinaryStatistics.class);
 
     private final long sum;
-    private final boolean hasNull;
 
-    public BinaryStatistics(long sum, boolean hasNull)
+    public BinaryStatistics(long sum)
     {
         this.sum = sum;
-        this.hasNull = hasNull;
     }
 
     public long getSum()
     {
         return sum;
-    }
-
-    public boolean hasNull()
-    {
-        return hasNull;
     }
 
     public long getRetainedSizeInBytes()
@@ -55,7 +48,6 @@ public class BinaryStatistics
     {
         return toStringHelper(this)
                 .add("sum", sum)
-                .add("hasNull", hasNull)
                 .toString();
     }
 

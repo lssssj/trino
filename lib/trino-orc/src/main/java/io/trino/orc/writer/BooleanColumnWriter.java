@@ -103,6 +103,9 @@ public class BooleanColumnWriter
                 dataStream.writeBoolean(value);
                 statisticsBuilder.addValue(value);
             }
+            else {
+                statisticsBuilder.setHasNull(true);
+            }
         }
     }
 

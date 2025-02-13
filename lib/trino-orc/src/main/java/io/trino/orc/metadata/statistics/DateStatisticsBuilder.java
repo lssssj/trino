@@ -55,7 +55,6 @@ public class DateStatisticsBuilder
         nonNullValueCount += valueCount;
         minimum = Math.min(value.getMin(), minimum);
         maximum = Math.max(value.getMax(), maximum);
-        hasNull |= value.hasNull();
     }
 
     private Optional<DateStatistics> buildDateStatistics()
@@ -63,7 +62,7 @@ public class DateStatisticsBuilder
         if (nonNullValueCount == 0) {
             return Optional.empty();
         }
-        return Optional.of(new DateStatistics(minimum, maximum, hasNull));
+        return Optional.of(new DateStatistics(minimum, maximum));
     }
 
     @Override
@@ -82,11 +81,13 @@ public class DateStatisticsBuilder
                 null,
                 null,
                 null,
-                bloomFilterBuilder.buildBloomFilter());
+                bloomFilterBuilder.buildBloomFilter(),
+                hasNull);
     }
 
     @Override
-    public void setHasNull(boolean hasNull) {
+    public void setHasNull(boolean hasNull)
+    {
         this.hasNull = hasNull;
     }
 
@@ -95,6 +96,9 @@ public class DateStatisticsBuilder
         DateStatisticsBuilder dateStatisticsBuilder = new DateStatisticsBuilder(new NoOpBloomFilterBuilder());
         for (ColumnStatistics columnStatistics : stats) {
             DateStatistics partialStatistics = columnStatistics.getDateStatistics();
+            if (columnStatistics.hasNull()) {
+                dateStatisticsBuilder.setHasNull(true);
+            }
             if (columnStatistics.getNumberOfValues() > 0) {
                 if (partialStatistics == null) {
                     // there are non null values but no statistics, so we cannot say anything about the data

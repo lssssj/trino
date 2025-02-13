@@ -36,9 +36,8 @@ public class IntegerStatistics
     private final long minimum;
     private final long maximum;
     private final long sum;
-    private final boolean hasNull;
 
-    public IntegerStatistics(Long minimum, Long maximum, Long sum, boolean hasNull)
+    public IntegerStatistics(Long minimum, Long maximum, Long sum)
     {
         checkArgument(minimum == null || maximum == null || minimum <= maximum, "minimum is not less than or equal to maximum: %s, %s", minimum, maximum);
 
@@ -50,7 +49,6 @@ public class IntegerStatistics
 
         this.hasSum = sum != null;
         this.sum = hasSum ? sum : 0;
-        this.hasNull = hasNull;
     }
 
     @Override
@@ -77,11 +75,6 @@ public class IntegerStatistics
     }
 
     @Override
-    public boolean hasNull() {
-        return false;
-    }
-
-    @Override
     public boolean equals(Object o)
     {
         if (this == o) {
@@ -93,14 +86,13 @@ public class IntegerStatistics
         IntegerStatistics that = (IntegerStatistics) o;
         return Objects.equals(getMin(), that.getMin()) &&
                 Objects.equals(getMax(), that.getMax()) &&
-                Objects.equals(getSum(), that.getSum()) &&
-                Objects.equals(hasNull(), that.hasNull());
+                Objects.equals(getSum(), that.getSum());
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(getMin(), getMax(), getSum(), hasNull());
+        return Objects.hash(getMin(), getMax(), getSum());
     }
 
     @Override
@@ -110,7 +102,6 @@ public class IntegerStatistics
                 .add("min", getMin())
                 .add("max", getMax())
                 .add("sum", getSum())
-                .add("hasNull", hasNull())
                 .toString();
     }
 

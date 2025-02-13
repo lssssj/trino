@@ -39,7 +39,8 @@ public class BinaryStatisticsBuilder
     }
 
     @Override
-    public void setHasNull(boolean hasNull) {
+    public void setHasNull(boolean hasNull)
+    {
         this.hasNull = hasNull;
     }
 
@@ -48,7 +49,7 @@ public class BinaryStatisticsBuilder
         if (nonNullValueCount == 0) {
             return Optional.empty();
         }
-        return Optional.of(new BinaryStatistics(sum, hasNull));
+        return Optional.of(new BinaryStatistics(sum));
     }
 
     private void addBinaryStatistics(long valueCount, BinaryStatistics value)
@@ -57,7 +58,6 @@ public class BinaryStatisticsBuilder
 
         nonNullValueCount += valueCount;
         sum += value.getSum();
-        hasNull |= value.hasNull();
     }
 
     @Override
@@ -77,7 +77,8 @@ public class BinaryStatisticsBuilder
                 null,
                 null,
                 binaryStatistics.orElse(null),
-                null);
+                null,
+                hasNull);
     }
 
     public static Optional<BinaryStatistics> mergeBinaryStatistics(List<ColumnStatistics> stats)
@@ -85,6 +86,9 @@ public class BinaryStatisticsBuilder
         BinaryStatisticsBuilder binaryStatisticsBuilder = new BinaryStatisticsBuilder();
         for (ColumnStatistics columnStatistics : stats) {
             BinaryStatistics partialStatistics = columnStatistics.getBinaryStatistics();
+            if (columnStatistics.hasNull()) {
+                binaryStatisticsBuilder.setHasNull(true);
+            }
             if (columnStatistics.getNumberOfValues() > 0) {
                 if (partialStatistics == null) {
                     // there are non null values but no statistics, so we cannot say anything about the data

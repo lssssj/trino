@@ -111,6 +111,9 @@ public class DoubleColumnWriter
                 statisticsBuilder.addValue(value);
                 dataStream.writeDouble(value);
             }
+            else {
+                statisticsBuilder.setHasNull(true);
+            }
         }
     }
 

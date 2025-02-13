@@ -113,6 +113,9 @@ public class FloatColumnWriter
                 dataStream.writeFloat(value);
                 statisticsBuilder.addValue(value);
             }
+            else {
+                statisticsBuilder.setHasNull(true);
+            }
         }
     }
 

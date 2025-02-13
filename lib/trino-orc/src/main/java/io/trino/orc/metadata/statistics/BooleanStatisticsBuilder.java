@@ -35,14 +35,16 @@ public class BooleanStatisticsBuilder
         for (int position = 0; position < block.getPositionCount(); position++) {
             if (!block.isNull(position)) {
                 addValue(type.getBoolean(block, position));
-            } else {
+            }
+            else {
                 hasNull = true;
             }
         }
     }
 
     @Override
-    public void setHasNull(boolean hasNull) {
+    public void setHasNull(boolean hasNull)
+    {
         this.hasNull = hasNull;
     }
 
@@ -60,7 +62,6 @@ public class BooleanStatisticsBuilder
 
         nonNullValueCount += valueCount;
         trueValueCount += value.getTrueValueCount();
-        hasNull |= value.hasNull();
     }
 
     private Optional<BooleanStatistics> buildBooleanStatistics()
@@ -68,7 +69,7 @@ public class BooleanStatisticsBuilder
         if (nonNullValueCount == 0) {
             return Optional.empty();
         }
-        return Optional.of(new BooleanStatistics(trueValueCount, hasNull));
+        return Optional.of(new BooleanStatistics(trueValueCount));
     }
 
     @Override
@@ -87,7 +88,8 @@ public class BooleanStatisticsBuilder
                 null,
                 null,
                 null,
-                null);
+                null,
+                hasNull);
     }
 
     public static Optional<BooleanStatistics> mergeBooleanStatistics(List<ColumnStatistics> stats)
@@ -95,6 +97,9 @@ public class BooleanStatisticsBuilder
         BooleanStatisticsBuilder booleanStatisticsBuilder = new BooleanStatisticsBuilder();
         for (ColumnStatistics columnStatistics : stats) {
             BooleanStatistics partialStatistics = columnStatistics.getBooleanStatistics();
+            if (columnStatistics.hasNull()) {
+                booleanStatisticsBuilder.setHasNull(true);
+            }
             if (columnStatistics.getNumberOfValues() > 0) {
                 if (partialStatistics == null) {
                     // there are non null values but no statistics, so we cannot say anything about the data

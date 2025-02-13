@@ -127,7 +127,6 @@ public class StringStatisticsBuilder
 
         nonNullValueCount += valueCount;
         sum = addExact(sum, value.getSum());
-        hasNull |= value.hasNull();
     }
 
     private Optional<StringStatistics> buildStringStatistics()
@@ -142,7 +141,7 @@ public class StringStatisticsBuilder
             // This corresponds to the behavior of metadata reader.
             return Optional.empty();
         }
-        return Optional.of(new StringStatistics(minimum, maximum, sum, hasNull));
+        return Optional.of(new StringStatistics(minimum, maximum, sum));
     }
 
     @Override
@@ -162,11 +161,13 @@ public class StringStatisticsBuilder
                 null,
                 null,
                 null,
-                bloomFilterBuilder.buildBloomFilter());
+                bloomFilterBuilder.buildBloomFilter(),
+                hasNull);
     }
 
     @Override
-    public void setHasNull(boolean hasNull) {
+    public void setHasNull(boolean hasNull)
+    {
         this.hasNull = hasNull;
     }
 
@@ -176,6 +177,9 @@ public class StringStatisticsBuilder
         StringStatisticsBuilder stringStatisticsBuilder = new StringStatisticsBuilder(Integer.MAX_VALUE, new NoOpBloomFilterBuilder());
         for (ColumnStatistics columnStatistics : stats) {
             StringStatistics partialStatistics = columnStatistics.getStringStatistics();
+            if (columnStatistics.hasNull()) {
+                stringStatisticsBuilder.setHasNull(true);
+            }
             if (columnStatistics.getNumberOfValues() > 0) {
                 if (partialStatistics == null || (partialStatistics.getMin() == null && partialStatistics.getMax() == null)) {
                     // there are non null values but no statistics, so we cannot say anything about the data

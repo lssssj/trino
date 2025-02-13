@@ -70,7 +70,7 @@ public class TimeMicrosStatisticsBuilder
         if (nonNullValueCount == 0) {
             return Optional.empty();
         }
-        return Optional.of(new IntegerStatistics(minimum, maximum, overflow ? null : sum, hasNull));
+        return Optional.of(new IntegerStatistics(minimum, maximum, overflow ? null : sum));
     }
 
     @Override
@@ -89,11 +89,13 @@ public class TimeMicrosStatisticsBuilder
                 null,
                 null,
                 null,
-                bloomFilterBuilder.buildBloomFilter());
+                bloomFilterBuilder.buildBloomFilter(),
+                hasNull);
     }
 
     @Override
-    public void setHasNull(boolean hasNull) {
+    public void setHasNull(boolean hasNull)
+    {
         this.hasNull = hasNull;
     }
 }

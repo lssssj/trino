@@ -37,9 +37,8 @@ public class StringStatistics
     @Nullable
     private final Slice maximum;
     private final long sum;
-    private final boolean hasNull;
 
-    public StringStatistics(@Nullable Slice minimum, @Nullable Slice maximum, long sum, boolean hasNull)
+    public StringStatistics(@Nullable Slice minimum, @Nullable Slice maximum, long sum)
     {
         if (minimum != null && maximum != null && minimum.compareTo(maximum) > 0) {
             throw new IllegalArgumentException(format(
@@ -52,7 +51,6 @@ public class StringStatistics
         this.minimum = minimum;
         this.maximum = maximum;
         this.sum = sum;
-        this.hasNull = hasNull;
     }
 
     @Override
@@ -79,11 +77,6 @@ public class StringStatistics
     }
 
     @Override
-    public boolean hasNull() {
-        return hasNull;
-    }
-
-    @Override
     public boolean equals(Object o)
     {
         if (this == o) {
@@ -95,14 +88,13 @@ public class StringStatistics
         StringStatistics that = (StringStatistics) o;
         return Objects.equals(minimum, that.minimum) &&
                 Objects.equals(maximum, that.maximum) &&
-                sum == that.sum &&
-                hasNull == that.hasNull;
+                sum == that.sum;
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(minimum, maximum, sum, hasNull);
+        return Objects.hash(minimum, maximum, sum);
     }
 
     @Override
@@ -112,7 +104,6 @@ public class StringStatistics
                 .add("min", minimum == null ? "<null>" : minimum.toStringUtf8())
                 .add("max", maximum == null ? "<null>" : maximum.toStringUtf8())
                 .add("sum", sum)
-                .add("hasNull", hasNull)
                 .toString();
     }
 

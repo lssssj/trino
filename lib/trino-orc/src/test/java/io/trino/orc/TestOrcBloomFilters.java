@@ -236,7 +236,7 @@ public class TestOrcBloomFilters
                 null,
                 0,
                 null,
-                new IntegerStatistics(10L, 2000L, null, true),
+                new IntegerStatistics(10L, 2000L, null),
                 null,
                 null,
                 null,
@@ -246,13 +246,14 @@ public class TestOrcBloomFilters
                 null,
                 new Utf8BloomFilterBuilder(1000, 0.01)
                         .addLong(1234L)
-                        .buildBloomFilter())));
+                        .buildBloomFilter(),
+                true)));
 
         ColumnMetadata<ColumnStatistics> nonMatchingStatisticsByColumnIndex = new ColumnMetadata<>(ImmutableList.of(new ColumnStatistics(
                 null,
                 0,
                 null,
-                new IntegerStatistics(10L, 2000L, null, true),
+                new IntegerStatistics(10L, 2000L, null),
                 null,
                 null,
                 null,
@@ -261,13 +262,14 @@ public class TestOrcBloomFilters
                 null,
                 null,
                 new Utf8BloomFilterBuilder(1000, 0.01)
-                        .buildBloomFilter())));
+                        .buildBloomFilter(),
+                true)));
 
         ColumnMetadata<ColumnStatistics> withoutBloomFilterStatisticsByColumnIndex = new ColumnMetadata<>(ImmutableList.of(new ColumnStatistics(
                 null,
                 0,
                 null,
-                new IntegerStatistics(10L, 2000L, null, true),
+                new IntegerStatistics(10L, 2000L, null),
                 null,
                 null,
                 null,
@@ -275,7 +277,8 @@ public class TestOrcBloomFilters
                 null,
                 null,
                 null,
-                null)));
+                null,
+                true)));
 
         assertThat(predicate.matches(1L, matchingStatisticsByColumnIndex)).isTrue();
         assertThat(predicate.matches(1L, withoutBloomFilterStatisticsByColumnIndex)).isTrue();
@@ -297,7 +300,7 @@ public class TestOrcBloomFilters
                 null,
                 0,
                 null,
-                new IntegerStatistics(10L, 2000L, null, true),
+                new IntegerStatistics(10L, 2000L, null),
                 null,
                 null,
                 null,
@@ -307,13 +310,14 @@ public class TestOrcBloomFilters
                 null,
                 new Utf8BloomFilterBuilder(1000, 0.01)
                         .addLong(1234L)
-                        .buildBloomFilter())));
+                        .buildBloomFilter(),
+                true)));
 
         ColumnMetadata<ColumnStatistics> nonMatchingStatisticsByColumnIndex = new ColumnMetadata<>(ImmutableList.of(new ColumnStatistics(
                 null,
                 0,
                 null,
-                new IntegerStatistics(10L, 2000L, null, true),
+                new IntegerStatistics(10L, 2000L, null),
                 null,
                 null,
                 null,
@@ -323,7 +327,8 @@ public class TestOrcBloomFilters
                 null,
                 new Utf8BloomFilterBuilder(1000, 0.01)
                         .addLong(9876L)
-                        .buildBloomFilter())));
+                        .buildBloomFilter(),
+                true)));
 
         assertThat(predicate.matches(1L, matchingStatisticsByColumnIndex)).isTrue();
         assertThat(predicate.matches(1L, nonMatchingStatisticsByColumnIndex)).isFalse();
@@ -336,7 +341,7 @@ public class TestOrcBloomFilters
                 null,
                 0,
                 null,
-                new IntegerStatistics(10L, 2000L, null, true),
+                new IntegerStatistics(10L, 2000L, null),
                 null,
                 null,
                 null,
@@ -346,7 +351,8 @@ public class TestOrcBloomFilters
                 null,
                 new Utf8BloomFilterBuilder(1000, 0.01)
                         .addLong(1500L)
-                        .buildBloomFilter())));
+                        .buildBloomFilter(),
+                true)));
 
         Range range = Range.range(BIGINT, 1233L, true, 1235L, true);
         TupleDomainOrcPredicate.TupleDomainOrcPredicateBuilder builder = TupleDomainOrcPredicate.builder()

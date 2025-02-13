@@ -53,8 +53,7 @@ public class ShortDecimalStatisticsBuilder
         return Optional.of(new DecimalStatistics(
                 new BigDecimal(BigInteger.valueOf(minimum), scale),
                 new BigDecimal(BigInteger.valueOf(maximum), scale),
-                SHORT_DECIMAL_VALUE_BYTES,
-                hasNull));
+                SHORT_DECIMAL_VALUE_BYTES));
     }
 
     @Override
@@ -73,11 +72,13 @@ public class ShortDecimalStatisticsBuilder
                 null,
                 decimalStatistics.orElse(null),
                 null,
-                null);
+                null,
+                hasNull);
     }
 
     @Override
-    public void setHasNull(boolean hasNull) {
+    public void setHasNull(boolean hasNull)
+    {
         this.hasNull = hasNull;
     }
 }

@@ -44,7 +44,8 @@ public class LongDecimalStatisticsBuilder
             if (!block.isNull(position)) {
                 Int128 value = (Int128) type.getObject(block, position);
                 addValue(new BigDecimal(value.toBigInteger(), scale));
-            } else {
+            }
+            else {
                 setHasNull(true);
             }
         }
@@ -73,7 +74,6 @@ public class LongDecimalStatisticsBuilder
         requireNonNull(value.getMax(), "value.getMax() is null");
 
         nonNullValueCount += valueCount;
-        hasNull |= value.hasNull();
 
         if (minimum == null) {
             minimum = value.getMin();
@@ -91,7 +91,7 @@ public class LongDecimalStatisticsBuilder
             return Optional.empty();
         }
         checkState(minimum != null && maximum != null);
-        return Optional.of(new DecimalStatistics(minimum, maximum, LONG_DECIMAL_VALUE_BYTES, hasNull));
+        return Optional.of(new DecimalStatistics(minimum, maximum, LONG_DECIMAL_VALUE_BYTES));
     }
 
     @Override
@@ -110,11 +110,13 @@ public class LongDecimalStatisticsBuilder
                 null,
                 decimalStatistics.orElse(null),
                 null,
-                null);
+                null,
+                hasNull);
     }
 
     @Override
-    public void setHasNull(boolean hasNull) {
+    public void setHasNull(boolean hasNull)
+    {
         this.hasNull = hasNull;
     }
 
@@ -123,6 +125,9 @@ public class LongDecimalStatisticsBuilder
         LongDecimalStatisticsBuilder decimalStatisticsBuilder = new LongDecimalStatisticsBuilder();
         for (ColumnStatistics columnStatistics : stats) {
             DecimalStatistics partialStatistics = columnStatistics.getDecimalStatistics();
+            if (columnStatistics.hasNull()) {
+                decimalStatisticsBuilder.setHasNull(true);
+            }
             if (columnStatistics.getNumberOfValues() > 0) {
                 if (partialStatistics == null) {
                     // there are non null values but no statistics, so we cannot say anything about the data

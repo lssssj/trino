@@ -65,6 +65,8 @@ public class ByteColumnWriter
 
     private int nonNullValueCount;
 
+    private boolean hasNull;
+
     private boolean closed;
 
     public ByteColumnWriter(OrcColumnId columnId, Type type, CompressionKind compression, int bufferSize)
@@ -106,6 +108,9 @@ public class ByteColumnWriter
                 dataStream.writeByte(SignedBytes.checkedCast(type.getLong(block, position)));
                 nonNullValueCount++;
             }
+            else {
+                hasNull = true;
+            }
         }
     }
 
@@ -113,9 +118,10 @@ public class ByteColumnWriter
     public Map<OrcColumnId, ColumnStatistics> finishRowGroup()
     {
         checkState(!closed);
-        ColumnStatistics statistics = new ColumnStatistics((long) nonNullValueCount, 0, null, null, null, null, null, null, null, null, null, null);
+        ColumnStatistics statistics = new ColumnStatistics((long) nonNullValueCount, 0, null, null, null, null, null, null, null, null, null, null, hasNull);
         rowGroupColumnStatistics.add(statistics);
         nonNullValueCount = 0;
+        hasNull = false;
         return ImmutableMap.of(columnId, statistics);
     }
 
@@ -222,5 +228,6 @@ public class ByteColumnWriter
         presentStream.reset();
         rowGroupColumnStatistics.clear();
         nonNullValueCount = 0;
+        hasNull = false;
     }
 }

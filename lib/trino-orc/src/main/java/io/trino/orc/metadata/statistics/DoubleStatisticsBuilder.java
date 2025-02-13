@@ -52,7 +52,8 @@ public class DoubleStatisticsBuilder
                     value = type.getDouble(block, position);
                 }
                 addValue(value);
-            } else {
+            }
+            else {
                 hasNull = true;
             }
         }
@@ -91,7 +92,6 @@ public class DoubleStatisticsBuilder
         nonNullValueCount += valueCount;
         minimum = Math.min(value.getMin(), minimum);
         maximum = Math.max(value.getMax(), maximum);
-        hasNull |= value.hasNull();
     }
 
     private Optional<DoubleStatistics> buildDoubleStatistics()
@@ -100,7 +100,7 @@ public class DoubleStatisticsBuilder
         if (nonNullValueCount == 0 || nanValueCount > 0) {
             return Optional.empty();
         }
-        return Optional.of(new DoubleStatistics(minimum, maximum, hasNull));
+        return Optional.of(new DoubleStatistics(minimum, maximum));
     }
 
     @Override
@@ -119,11 +119,13 @@ public class DoubleStatisticsBuilder
                 null,
                 null,
                 null,
-                bloomFilterBuilder.buildBloomFilter());
+                bloomFilterBuilder.buildBloomFilter(),
+                hasNull);
     }
 
     @Override
-    public void setHasNull(boolean hasNull) {
+    public void setHasNull(boolean hasNull)
+    {
         this.hasNull = hasNull;
     }
 
@@ -132,6 +134,9 @@ public class DoubleStatisticsBuilder
         DoubleStatisticsBuilder doubleStatisticsBuilder = new DoubleStatisticsBuilder(new NoOpBloomFilterBuilder());
         for (ColumnStatistics columnStatistics : stats) {
             DoubleStatistics partialStatistics = columnStatistics.getDoubleStatistics();
+            if (columnStatistics.hasNull()) {
+                doubleStatisticsBuilder.setHasNull(true);
+            }
             if (columnStatistics.getNumberOfValues() > 0) {
                 if (partialStatistics == null) {
                     // there are non null values but no statistics, so we cannot say anything about the data

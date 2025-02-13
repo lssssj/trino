@@ -298,6 +298,9 @@ public class SliceDictionaryColumnWriter
                 rawBytes += valueBlock.getSliceLength(position);
                 totalNonNullValueCount++;
             }
+            else {
+                statisticsBuilder.setHasNull(true);
+            }
         }
     }
 

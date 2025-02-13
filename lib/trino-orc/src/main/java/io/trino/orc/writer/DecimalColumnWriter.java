@@ -123,6 +123,9 @@ public class DecimalColumnWriter
                     dataStream.writeUnscaledValue(value);
                     shortDecimalStatisticsBuilder.addValue(value);
                 }
+                else {
+                    shortDecimalStatisticsBuilder.setHasNull(true);
+                }
             }
         }
         else {
